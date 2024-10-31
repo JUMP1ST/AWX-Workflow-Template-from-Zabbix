@@ -1,65 +1,80 @@
 # AWX Node Rebuild Workflow
 
 ## Overview
+
 This project provides an automated solution for detecting down nodes in a Rancher Kubernetes Engine (RKE) or Rancher-managed cluster using Zabbix and automating the node rebuild process through AWX. The workflow integrates monitoring, manual intervention, and automated rebuild steps into one streamlined process.
 
 ## Features
+
 - **Node Monitoring**: Zabbix monitors the availability of RKE or Rancher nodes.
 - **Automated Alerting**: When a node goes down, an alert is triggered to notify the appropriate channel for manual intervention.
 - **Manual Intervention**: The user is given an option to approve or decline the rebuild of the downed node.
 - **AWX Integration**: AWX runs a workflow template that handles notifications, waits for user input, and automates the rebuild if approved.
 
 ## Workflow Overview
+
 1. **Node Monitoring**: Zabbix continuously monitors the health of Rancher nodes.
 2. **Alert Trigger**: If a node goes down, Zabbix triggers an alert that notifies the user.
-3. **Notification & Manual Approval**: A notification is sent to a Mattermost or Slack channel with "YES" or "NO" buttons for manual intervention.
+3. **Notification & Manual Approval**: A notification is sent to a Mattermost channel with "YES" or "NO" buttons for manual intervention.
 4. **AWX Workflow Execution**: If the rebuild is approved, AWX runs an Ansible playbook to automatically rebuild the node.
 
 ## Prerequisites
+
 - **Zabbix**: Configured to monitor the RKE/Rancher nodes.
 - **AWX**: Set up and running, with API access enabled.
-- **Mattermost or Slack**: Configured with an incoming webhook to receive notifications.
+- **Mattermost**: Configured with an incoming webhook to receive notifications.
 - **Python & Flask**: Lightweight server for capturing manual responses (optional).
 
 ## Installation and Setup
+
 1. **Set Up Node Monitoring in Zabbix**
+
    - Add Rancher nodes to Zabbix.
    - Use ICMP ping or a Zabbix agent to monitor availability.
    - Create a trigger to detect if a node is unreachable.
 
 2. **Create AWX Job Templates**
+
    - Create a workflow template in AWX with steps for notification, pause for approval, and node rebuild.
    - Parameterize the playbooks for node-specific details.
 
 3. **Configure Notification Script in Zabbix**
+
    - Create a custom alert script (`trigger_awx.sh`) to initiate the AWX workflow.
    - Place the script in Zabbix's `alertscripts` directory and configure a media type to use it.
 
 4. **Integrate AWX and Manual Intervention**
+
    - Use the AWX **pause** feature to wait for manual input.
-   - Optionally, deploy a Flask server to handle responses from Mattermost or Slack buttons.
+   - Optionally, deploy a Flask server to handle responses from Mattermost buttons.
 
 ## Example Usage
+
 - When a node goes down, Zabbix sends an alert to Mattermost.
 - The alert provides an option to approve or decline the rebuild.
 - If approved, AWX rebuilds the node using the provided job template.
 
 ## AWX Workflow Template Structure
+
 1. **Notification Step**: Send an alert to the appropriate channel with manual intervention options.
 2. **Pause for Approval**: AWX waits for the user to provide input.
 3. **Rebuild Node**: Execute the playbook to rebuild the node if the approval is granted.
 
 ## Security Considerations
+
 - Use proper authentication and secure credentials when configuring AWX and integrating with Zabbix.
 - Restrict access to the Flask server to prevent unauthorized triggers.
 - Encrypt sensitive data, such as API keys and webhook URLs.
 
 ## License
+
 This project is licensed under the MIT License. See the LICENSE file for more details.
 
 ## Contribution
+
 Contributions are welcome! Please feel free to submit pull requests, open issues, or suggest improvements.
 
 ## Contact
-For questions or support, please contact [your-email@example.com].
+
+For questions or support, please contact [[your-email@example.com](mailto:your-email@example.com)].
 
